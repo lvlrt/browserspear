@@ -41,6 +41,9 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - look for persistance options in same manner as poisontab, Also try migration to other tabs
 - Penetration to system-level attacks
 
+# Known issues
+- Flickering of command-line ( will be solved )
+
 # Examples how to inject
 TODO
 - bettercap, badusb, mitm by spoofing evil twin (link articles)
