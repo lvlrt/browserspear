@@ -21,7 +21,7 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - To start the command server, use the following command:
 <pre>node backend_server.js</pre>
 
-- To test, inject the backdoor as a MitM, serve the file yourself or open http://<IP or URL of server>:1337/ in a browser
+- To test, inject the backdoor as a MitM, serve the file yourself or open http://IP-or-URL-server>:1337/ in a browser
 
 - Commands can be send by typing them in the backend_server.js-interface or doing a HTTP-call:
 <pre>curl 'http://localhost:1337/exec?alert("muahahahaha")'</pre>
