@@ -37,5 +37,9 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - GET call to server (from local) to generate payload (newest version) with specified URL to be directed to
 - Help command in interface should explain how iframe can be use for the injection of backdoor.html by tool like bettercap (for example)
 
+# Examples how to inject
+TODO
+- bettercap, badusb, mitm by spoofing evil twin (link articles)
+
 # Credits
 - Samy Kamkar for the inspiration through the Poisontab project and the code that provides the low-level base of the project.
