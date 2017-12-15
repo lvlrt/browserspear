@@ -26,6 +26,8 @@ Commands can be send by typing them in the backend_server.js-interface or doing 
 - interface should take commands to be sent to victims.
 - a new connection should be fingerprinted and logged to a local file
 - interface with more layers to list and send commands specific to victim
+- GET call to server (from local) to generate payload (newest version) with specified URL to be directed to
+- Help command in interface should explain how iframe can be use for the injection of backdoor.html by tool like bettercap (for example)
 
 # Credits
 - Samy Kamkar for the inspiration through the Poisontab project and the code that provides the low-level base of the project.
