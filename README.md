@@ -11,6 +11,12 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - Examples of payloads: webcam stream, audio record, keylogger, persistance, ... (check BeEF for inspiration)
 - SSL protected connection with loadable cert (Future)
 
+# Dependencies
+- Nodejs (install with package-manager)
+<pre>apt-get install nodejs</pre>
+- Websockets (nodejs-library: https://www.npmjs.com/package/websocket) easiest installed with npm
+<pre>apt-get install npm && npm install websockets</pre> 
+
 # Usage
 To start the command server, use the following command:
 <pre>node backend_server.js</pre>
