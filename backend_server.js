@@ -56,11 +56,25 @@ server.listen(webSocketsServerPort, () => {
 wsServer = new WebSocketServer({
   httpServer: server
 })
+function handleresponse(obj, con)
+{
+	//HERE WHAT TO DO WITH RESPONSES FROM CLIENTS
+	if ("fingerprint" in obj) {
+		console.log(obj.fingerprint);
+	}
+	// TODO use for merging with connections for info // if ("components" in obj) {
 
+}
 function handleReq(obj, con)
 {
   if (obj.request === 'getresponse')
     gr = obj.html
+}
+
+function ask_fingerprint_info(connection)
+{
+	command = "new Fingerprint2().get(function(result, components){ socket.send(JSON.stringify({'fingerprint':result})); socket.send(JSON.stringify({'components':components})); });"
+	connection.sendUTF(JSON.stringify({ request: 'eval', content: command }))  
 }
 
 wsServer.on('request', (request) => {
@@ -73,14 +87,18 @@ wsServer.on('request', (request) => {
   })
 
   connection.on('message', (message) => {
-    try { obj = JSON.parse(message.utf8Data) } catch(e) { }
-    console.log('message: ' + message.utf8Data)
-    console.log(obj)
-
+    try { obj = JSON.parse(message.utf8Data) } catch(e) {}
     if (typeof(obj) === 'object')
-      handleReq(obj, connection)
+	  {
+		handleReq(obj, connection);
+		handleresponse(obj,connection);
+	  }
     else
-      connection.sendUTF('hello')
+	  {
+		//TODO give name of connection (with using the connection var to the left
+		console.log('message: ' + message.utf8Data);
+	  }
+
   })
 
   // remove connection from our list
@@ -91,6 +109,8 @@ wsServer.on('request', (request) => {
       //if (_.isEqual(conns[i], connection)) // XXX
         conns.splice(i, 1)
   })
+
+  ask_fingerprint_info(connection);
 })
 
 //START interface
