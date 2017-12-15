@@ -15,8 +15,8 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - Nodejs (install with package-manager)
 <pre>apt-get install nodejs</pre>
 - Websockets (nodejs-library: https://www.npmjs.com/package/websocket) easiest installed with npm (see below)
-- Inquirer (nodejs-library: https://www.npmjs.com/package/inquirer) easiest installed with npm (see below)
-<pre>apt-get install npm && npm install websockets && npm install inquirer</pre> 
+- Prompt (nodejs-library: https://www.npmjs.com/package/prompt) easiest installed with npm (see below)
+<pre>apt-get install npm && npm install websockets && npm install prompt</pre> 
 
 # Usage
 - To start the command server, use the following command:
