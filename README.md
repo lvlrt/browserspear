@@ -40,9 +40,7 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - Help command in interface should explain how iframe can be use for the injection of backdoor.html by tool like bettercap (for example)
 - look for persistance options in same manner as poisontab, Also try migration to other tabs
 - Penetration to system-level attacks
-
-# Known issues
-- Flickering of command-line ( will be solved )
+- History of commands (up and down arrow key) -> prompt library
 
 # Examples how to inject
 TODO
