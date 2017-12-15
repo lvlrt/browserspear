@@ -18,13 +18,12 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 <pre>apt-get install npm && npm install websockets</pre> 
 
 # Usage
-To start the command server, use the following command:
+- To start the command server, use the following command:
 <pre>node backend_server.js</pre>
 
-Inject the backdoor or serve backdoor.html and open it in a browser to test:
-<pre>python3 -m http.server</pre>
+- To test, inject the backdoor as a MitM, serve the file yourself or open http://<IP or URL of server>:1337/ in a browser
 
-Commands can be send by typing them in the backend_server.js-interface or doing a HTTP-call:
+- Commands can be send by typing them in the backend_server.js-interface or doing a HTTP-call:
 <pre>curl 'http://localhost:1337/exec?alert("muahahahaha")'</pre>
 
 # TODO & Roadmap
