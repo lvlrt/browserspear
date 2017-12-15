@@ -1,4 +1,4 @@
-# browserspear
+# BrowserSpear
 A framework for exploiting browsers by injecting Javascript to a web-based backdoor
 
 # Aim of the project
@@ -12,6 +12,14 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - SSL protected connection with loadable cert (Future)
 
 # Usage
+To start the command server, use the following command:
+<pre>node backend_server.js</pre>
+
+Inject the backdoor or serve backdoor.html and open it in a browser to test:
+<pre>python3 -m http.server</pre>
+
+Commands can be send by typing them in the backend_server.js-interface or doing a HTTP-call:
+<pre>curl 'http://localhost:1337/exec?alert("muahahahaha")'</pre>
 
 # Credits
-- Samy Kamkar for the inspiration through the Poisontab project
+- Samy Kamkar for the inspiration through the Poisontab project and the code that provides the low-level base of the project.
