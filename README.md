@@ -33,6 +33,7 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - (DONE) interface should take commands to be sent to victims.
 - (DONE) a new connection should be fingerprinted 
 - ... and merged with the connection object and also logged to a local file with a history of commands.
+- Module system with javascript-scripts in files that are parsed into onliners (maybe minified) and then send. Only knowledge is for returning data with socket.send() and developing a way to also have modules for server-side (retrieval of loot) (Idea: support "file"-tag and "stream-tag" and "data"-tag)
 - input should be able to be corrected and navigated by the arrow keys without creating escape characters (https://scotch.io/tutorials/build-an-interactive-command-line-application-with-nodejs)
 - interface with more layers to list and send commands specific to victim
 - GET call to server (from local) to generate payload (newest version) with specified URL to be directed to
