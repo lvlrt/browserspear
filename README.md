@@ -42,6 +42,7 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - look for persistance options in same manner as poisontab, Also try migration to other tabs
 - Penetration to system-level attacks
 - History of commands (up and down arrow key) -> prompt library
+- Guide with modules, builtup and options for loot retrieval
 
 # Examples how to inject
 TODO
