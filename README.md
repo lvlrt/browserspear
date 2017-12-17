@@ -43,6 +43,8 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - Penetration to system-level attacks
 - History of commands (up and down arrow key) -> prompt library
 - Guide with modules, builtup and options for loot retrieval
+- modules (attacks) moest be able to run async in sessions (also multiple clients)
+- handler option in modules?
 
 # Examples how to inject
 TODO
