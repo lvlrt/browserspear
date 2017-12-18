@@ -46,6 +46,7 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - modules (attacks) moest be able to run async in sessions (also multiple clients)
 - handler option in modules?
 - fingerprint maybe module,too heavy,  just only a number?
+- Autoreconnect by spear.html
 
 # Examples how to inject
 TODO
