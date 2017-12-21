@@ -16,7 +16,8 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 <pre>apt-get install nodejs</pre>
 - Websockets (nodejs-library: https://www.npmjs.com/package/websocket) easiest installed with npm (see below)
 - Prompt (nodejs-library: https://www.npmjs.com/package/prompt) easiest installed with npm (see below)
-<pre>apt-get install npm && npm install websockets prompt uglify-js </pre> 
+- Commander (nodejs-library: https://www.npmjs.com/package/commander) easiest installed with npm (see below)
+<pre>apt-get install npm && npm install websockets prompt uglify-js commander</pre> 
 
 # Usage
 - To start the command server, use the following command:
