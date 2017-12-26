@@ -18,6 +18,7 @@ exports.data = {
 		var payload = "send(window.navigator.vibrate([10000]))";
 		for (var i in targets) {
 			targets[i].sendUTF(JSON.stringify({ request: 'eval', content: payload }));
+			console.log('sent to '+targets[i]);
 		}
 		console.log('Payload sent')
 	}

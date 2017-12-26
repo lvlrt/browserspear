@@ -27,7 +27,8 @@ video.onloadeddata = function() {
 };
 //navigator.getUserMedia(
 send(
-getUserMedia(
+	//TODO
+navigator.getUserMedia(
     // Options
     {
         video: true
