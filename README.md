@@ -21,7 +21,7 @@ A framework for exploiting browsers by injecting Javascript to a web-based backd
 
 # Usage
 - To start the command server, use the following command:
-<pre>node backend_server.js</pre>
+<pre>node browserspear.js</pre>
 
 - To test, inject the backdoor as a MitM, serve the file yourself or open http://IP-or-URL-server>:1337/ in a browser
 
